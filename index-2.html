@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Scream Pass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <p class="eyebrow">Microphone gate</p>
+    <h1>Scream Pass</h1>
+    <p class="lede" id="lede">Scream loud, high and long enough to open the vault.</p>
+  </header>
+
+  <section class="panel scope" aria-label="Live microphone scope">
+    <div class="scope-head">
+      <span class="chip" id="chip" data-state="idle" role="status" aria-live="polite">Locked</span>
+      <span class="hint" id="hint" aria-live="polite">Mic is off</span>
+    </div>
+    <canvas id="scope" aria-label="Level and pitch over the last four seconds"></canvas>
+    <dl class="readouts">
+      <div><dt>Over room</dt><dd id="rdLevel">&ndash;</dd></div>
+      <div><dt>Pitch</dt><dd id="rdPitch">&ndash;</dd></div>
+      <div><dt id="rdHoldLabel">Held</dt><dd id="rdHold">0.0 s</dd></div>
+    </dl>
+  </section>
+
+  <ul class="gates" id="gates" aria-label="What the scream has to do"></ul>
+
+  <button class="btn primary block" id="go" type="button">Start listening</button>
+
+  <section class="panel vault" id="vault" data-state="locked" aria-live="polite">
+    <div id="vaultLocked" class="vault-locked" style="display:grid;gap:12px;justify-items:start">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="9" y="21" width="30" height="22" rx="3"/><path d="M15 21v-6a9 9 0 0 1 18 0v6"/><path d="M24 30v6"/></svg>
+      <h2>Locked</h2>
+      <p>The message behind this door shows once a scream passes.</p>
+    </div>
+    <div id="vaultOpen" style="display:grid;gap:12px;justify-items:start;width:100%" hidden>
+      <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="9" y="21" width="30" height="22" rx="3"/><path d="M15 21v-6a9 9 0 0 1 17-4"/><path d="M24 30v6"/></svg>
+      <h2>Access granted</h2>
+      <div class="secret" id="secretOut"></div>
+      <div class="row">
+        <button class="btn" id="copy" type="button">Copy</button>
+        <button class="btn" id="relock" type="button">Lock again</button>
+      </div>
+    </div>
+  </section>
+
+  <details class="settings" id="settings">
+    <summary>Settings</summary>
+    <div class="set-body">
+      <fieldset class="field">
+        <legend>Pass type</legend>
+        <div class="radios">
+          <label><input type="radio" name="mode" value="any"> Any scream</label>
+          <label><input type="radio" name="mode" value="match"> Match my scream</label>
+        </div>
+        <small>Any scream checks loudness, pitch range and length. Match my scream compares against a sound you record.</small>
+      </fieldset>
+
+      <div class="field slide">
+        <label for="overDb">Loudness above room noise</label><output id="overDbOut" for="overDb"></output>
+        <input id="overDb" type="range" min="10" max="45" step="1">
+      </div>
+
+      <div id="grpAny" style="display:grid;gap:18px">
+        <div class="field slide">
+          <label for="holdS">Hold time</label><output id="holdSOut" for="holdS"></output>
+          <input id="holdS" type="range" min="0.5" max="4" step="0.1">
+        </div>
+        <div class="field">
+          <label for="fLow">Pitch range (Hz)</label>
+          <div class="pair">
+            <input id="fLow" type="number" min="150" max="2900" step="50" inputmode="numeric">
+            <span aria-hidden="true">to</span>
+            <input id="fHigh" type="number" min="250" max="3000" step="50" inputmode="numeric" aria-label="Highest pitch in Hz">
+          </div>
+          <small>A speaking voice sits under about 300 Hz. Screams usually land between 500 and 2500 Hz.</small>
+        </div>
+      </div>
+
+      <div id="grpMatch" style="display:grid;gap:18px" hidden>
+        <div class="field slide">
+          <label for="tolSemi">Pitch tolerance</label><output id="tolSemiOut" for="tolSemi"></output>
+          <input id="tolSemi" type="range" min="1" max="6" step="0.5">
+        </div>
+        <div class="field">
+          <span style="font-weight:500">Your pass scream</span>
+          <span class="sig" id="sigText">No scream recorded yet.</span>
+          <div class="row"><button class="btn" id="enroll" type="button">Record my scream</button></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="secret">Message behind the door</label>
+        <textarea id="secret" spellcheck="false"></textarea>
+        <small>A link starting with http or https becomes a button.</small>
+      </div>
+
+      <div class="row"><button class="btn" id="reset" type="button">Reset settings</button></div>
+      <p class="note">This runs entirely in the page. The message is stored in this browser and anyone who can open the file can read it in the source, so use it as a fun gate, not as security.</p>
+    </div>
+  </details>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
